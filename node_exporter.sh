@@ -3,8 +3,8 @@
 set -e
 
 INSTALL_DIR="$HOME/promethus"
-mkdir -p INSTALL_DIR
-cd INSTALL_DIR
+mkdir -p "$INSTALL_DIR"
+cd "$INSTALL_DIR"
 ARCH=$(uname -m)
 case "$ARCH" in
     x86_64)
