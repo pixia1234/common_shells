@@ -2,8 +2,9 @@
 
 set -e
 
-mkdir -p /root/promethus
-cd /root/promethus
+INSTALL_DIR="$HOME/promethus"
+mkdir -p INSTALL_DIR
+cd INSTALL_DIR
 ARCH=$(uname -m)
 case "$ARCH" in
     x86_64)
@@ -60,7 +61,7 @@ curl -LO "$DOWNLOAD_URL"
 # 5. 解压
 tar -xzf "$FILENAME"
 rm -f "$FILENAME"
-
+chmod +x "${INSTALL_DIR}/node_exporter-${VERSION}.linux-${ARCH_TYPE}/node_exporter"
 # 6. 配置systemd服务
 cat <<EOF > /etc/systemd/system/node_exporter.service
 [Unit]
