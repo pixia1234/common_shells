@@ -2,7 +2,7 @@
 
 set -e
 
-INSTALL_DIR="$HOME/promethus"
+INSTALL_DIR="$HOME/prometheus"
 mkdir -p "$INSTALL_DIR"
 cd "$INSTALL_DIR"
 ARCH=$(uname -m)
