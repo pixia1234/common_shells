@@ -61,7 +61,7 @@ curl -LO "$DOWNLOAD_URL"
 # 5. 解压
 tar -xzf "$FILENAME"
 rm -f "$FILENAME"
-chmod +x "${INSTALL_DIR}/node_exporter-${VERSION}.linux-${ARCH_TYPE}/node_exporter"
+chmod +x "${INSTALL_DIR}/node_exporter-${LATEST_VERSION}.linux-${ARCH_TYPE}/node_exporter"
 # 6. 配置systemd服务
 cat <<EOF > /etc/systemd/system/node_exporter.service
 [Unit]
