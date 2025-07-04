@@ -2,9 +2,6 @@
 
 set -e
 
-INSTALL_DIR="$HOME/prometheus"
-mkdir -p "$INSTALL_DIR"
-cd "$INSTALL_DIR"
 ARCH=$(uname -m)
 case "$ARCH" in
     x86_64)
@@ -51,18 +48,33 @@ case "$ARCH" in
         exit 1
         ;;
 esac
+
+# 获取最新版本
 LATEST_VERSION=$(curl -s https://api.github.com/repos/prometheus/node_exporter/releases/latest | grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\1/')
 echo "检测到最新版本: $LATEST_VERSION"
+
 FILENAME="node_exporter-${LATEST_VERSION}.linux-${ARCH_TYPE}.tar.gz"
 DOWNLOAD_URL="https://github.com/prometheus/node_exporter/releases/download/v${LATEST_VERSION}/${FILENAME}"
+
+WORK_DIR="/tmp/node_exporter_setup"
+mkdir -p "$WORK_DIR"
+cd "$WORK_DIR"
+
 echo "开始下载: $DOWNLOAD_URL"
 curl -LO "$DOWNLOAD_URL"
 
-# 5. 解压
+echo "解压文件..."
 tar -xzf "$FILENAME"
-rm -f "$FILENAME"
-chmod +x "${INSTALL_DIR}/node_exporter-${LATEST_VERSION}.linux-${ARCH_TYPE}/node_exporter"
-# 6. 配置systemd服务
+
+# 移动可执行文件
+echo "移动 node_exporter 到 /usr/local/bin"
+mv node_exporter-${LATEST_VERSION}.linux-${ARCH_TYPE}/node_exporter /usr/local/bin/node_exporter
+chmod +x /usr/local/bin/node_exporter
+
+# 清理临时文件
+rm -rf "$WORK_DIR"
+
+# 配置 systemd 服务
 cat <<EOF > /etc/systemd/system/node_exporter.service
 [Unit]
 Description=Node Exporter
@@ -70,19 +82,19 @@ After=network.target
 
 [Service]
 User=root
-ExecStart=/root/prometheus/node_exporter-${LATEST_VERSION}.linux-${ARCH_TYPE}/node_exporter --web.listen-address=127.0.0.1:9100
+ExecStart=/usr/local/bin/node_exporter --web.listen-address=127.0.0.1:9100
 Restart=on-failure
 
 [Install]
 WantedBy=multi-user.target
 EOF
 
-chmod +x "/root/prometheus/node_exporter-${LATEST_VERSION}.linux-${ARCH_TYPE}/node_exporter"
-
-# 7. 重载systemd并启动服务
+# 启动并设置开机自启
 systemctl daemon-reload
 systemctl enable node_exporter
-systemctl start node_exporter
+systemctl restart node_exporter
 
-# 8. 查看服务状态
+# 查看服务状态
 systemctl status node_exporter --no-pager
+
+echo "Node Exporter 已成功安装并启动！"
