@@ -3,7 +3,15 @@
 set -e
 
 FRP_VERSION="0.63.0"
-ARCH="amd64"  # 可根据系统架构修改
+ARCH=$(uname -m)
+if [[ "$ARCH" == "x86_64" ]]; then
+    ARCH="amd64"
+elif [[ "$ARCH" == "aarch64" ]]; then
+    ARCH="arm64"
+else
+    echo "不支持的系统架构: $ARCH"
+    exit 1
+fi
 
 # 1. 下载并安装 frpc
 WORK_DIR="/tmp/frp_setup"
