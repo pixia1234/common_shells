@@ -70,14 +70,14 @@ After=network.target
 
 [Service]
 User=root
-ExecStart=/root/promethus/node_exporter-${LATEST_VERSION}.linux-${ARCH_TYPE}/node_exporter --web.listen-address=127.0.0.1:9100
+ExecStart=/root/prometheus/node_exporter-${LATEST_VERSION}.linux-${ARCH_TYPE}/node_exporter --web.listen-address=127.0.0.1:9100
 Restart=on-failure
 
 [Install]
 WantedBy=multi-user.target
 EOF
 
-chmod +x "/root/promethus/node_exporter-${LATEST_VERSION}.linux-${ARCH_TYPE}/node_exporter"
+chmod +x "/root/prometheus/node_exporter-${LATEST_VERSION}.linux-${ARCH_TYPE}/node_exporter"
 
 # 7. 重载systemd并启动服务
 systemctl daemon-reload
